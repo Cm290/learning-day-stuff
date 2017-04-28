@@ -44,6 +44,7 @@ module.exports.getAll = (cb) => {
         .from('haikus')
         .column(knex.raw(dateFormat))
         .asCallback((err, allHaikus) => {
+            if (err) return cb(err);
             cb(null, allHaikus);
         });
 

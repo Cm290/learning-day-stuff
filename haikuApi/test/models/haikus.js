@@ -30,7 +30,7 @@ function generateHaiku(id) {
     return haiku;
 };
 const haiku2 = generateHaiku('haiku2');
-const haikusGetAll = [haiku1, generateHaiku('haiku2')];
+const haiku3 = generateHaiku('haiku3');
 
 describe('haikus', () => {
     beforeEach((done) => {
@@ -59,11 +59,20 @@ describe('haikus', () => {
                 done();
             });
         });
+
+        it('returns an error if the database returns an error', (done) => {
+            knexStub.stub(new Error('Liftum and Shiftum'));
+
+            haikus.getAll((err, created) => {
+                assert.ok(err);
+                assert.equal(err.message, 'Liftum and Shiftum');
+                done();
+            });
+        });
     });
 
     describe('.save', () => {
         it('saves a haiku to the database', (done) => {
-            const haiku3 = generateHaiku('haiku3');
 
             async.series([
                 function saveHaiku(cb) {
@@ -87,7 +96,6 @@ describe('haikus', () => {
         });
 
         it('returns true when a new haiku is added', (done) => {
-            const haiku3 = generateHaiku('haiku3');
 
             haikus.save(haiku3, (err, created) => {
                 assert.ifError(err);
@@ -134,6 +142,16 @@ describe('haikus', () => {
             })
         });
 
+        it('returns an error if it cannot save the haiku', (done) => {
+            knexStub.stub(new Error('Liftum and Shiftum'));
+
+            haikus.save(haiku3, (err, created) => {
+                assert.ok(err);
+                assert.equal(err.message, 'Liftum and Shiftum');
+                done();
+            });
+        });
+
     });
 
     describe('.delete', () => {
@@ -175,6 +193,16 @@ describe('haikus', () => {
                         });
                 }
             ], done);
+        });
+
+        it('returns an error if the database returns an error', (done) => {
+            knexStub.stub(new Error('Liftum and Shiftum'));
+
+            haikus.delete(haiku2, (err, created) => {
+                assert.ok(err);
+                assert.equal(err.message, 'Liftum and Shiftum');
+                done();
+            });
         });
     });
 });
