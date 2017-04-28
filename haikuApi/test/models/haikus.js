@@ -3,6 +3,8 @@
 const assert = require('assert');
 const async = require('async');
 const fs = require('fs');
+const sinon = require('sinon');
+const sandbox = sinon.sandbox.create();
 
 const knex = require('../../lib/knex');
 const haikus = require('../../models/haikus');
@@ -50,6 +52,7 @@ describe('haikus', () => {
     });
     afterEach(() => {
         knexStub.restore();
+        sandbox.restore();
     });
     describe('.getAll', () => {
         it('gets all the haikus', (done) => {
@@ -143,11 +146,13 @@ describe('haikus', () => {
         });
 
         it('returns an error if it cannot save the haiku', (done) => {
-            knexStub.stub(new Error('Liftum and Shiftum'));
+            sandbox.stub(knex, 'transaction').returns({
+                asCallback: sandbox.stub().yields(new Error('errum'))
+            });
 
             haikus.save(haiku3, (err, created) => {
                 assert.ok(err);
-                assert.equal(err.message, 'Liftum and Shiftum');
+                assert.equal(err.message, 'errum');
                 done();
             });
         });
@@ -156,7 +161,6 @@ describe('haikus', () => {
 
     describe('.delete', () => {
         it('deletes a haiku from the database', (done) => {
-
             async.series([
                 function saveHaiku(cb) {
                     haikus.delete(haiku2, cb);
@@ -198,7 +202,7 @@ describe('haikus', () => {
         it('returns an error if the database returns an error', (done) => {
             knexStub.stub(new Error('Liftum and Shiftum'));
 
-            haikus.delete(haiku2, (err, created) => {
+            haikus.delete(haiku2, (err, results) => {
                 assert.ok(err);
                 assert.equal(err.message, 'Liftum and Shiftum');
                 done();

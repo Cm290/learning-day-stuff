@@ -15,8 +15,13 @@ const dateFormat = datesToFormat.join(', ');
 //         res.send(rows);
 //     });
 
-function deleteHaiku(id, cb) {
-    knex.queryBuilder()
+function deleteHaiku(id, trx, cb) {
+    if (!cb) {
+        cb = trx;
+        trx = knex;
+    }
+
+    trx.queryBuilder()
         .del()
         .from('haikus')
         .where({
@@ -30,8 +35,12 @@ function deleteHaiku(id, cb) {
         });
 };
 
-function saveHaiku(haikuSave, cb) {
-    knex.queryBuilder()
+function saveHaiku(haikuSave, trx, cb) {
+    if (!cb) {
+        cb = trx;
+        trx = knex;
+    }
+    trx.queryBuilder()
         .insert(haikuSave)
         .into('haikus')
         .asCallback(cb);
@@ -52,16 +61,17 @@ module.exports.getAll = (cb) => {
 
 module.exports.save = (haikuSave, cb) => {
     const haikuId = haikuSave.id;
+    knex.transaction((trx) => {
+        async.series({
+            deleteHaiku: async.apply(deleteHaiku, haikuId, trx),
+            saveHaiku: async.apply(saveHaiku, haikuSave, trx)
+        }, (err, results) => {
+            if (err) return trx.rollback(err);
 
-    async.series({
-        deleteHaiku: async.apply(deleteHaiku, haikuId),
-        saveHaiku: async.apply(saveHaiku, haikuSave)
-    }, (err, results) => {
-        if (err) return cb(err);
-
-        const created = results.deleteHaiku;
-        cb(null, created);
-    });
+            const created = results.deleteHaiku;
+            trx.commit(created);
+        });
+    }).asCallback(cb);
 };
 
 module.exports.delete = (haikuDelete, cb) => {
