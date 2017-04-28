@@ -22,23 +22,15 @@ const haiku1 = {
     year_of_release: '1600-01-01',
     date_uploaded: '2017-04-21'
 };
-const haiku2 = {
-    id: 'haiku2',
-    title: 'Silence',
-    author: 'Basho Matsuo',
-    text: 'An old silent pond... A frog jumps into the pond, splash! Silence again.',
-    year_of_release: '1600-01-01',
-    date_uploaded: '2017-04-21'
+
+function createHaiku(id) {
+    const haiku = Object.assign({}, haiku1, {
+        id
+    });
+    return haiku;
 };
 
-const haiku3 = {
-    id: 'haiku3',
-    title: 'Snail',
-    author: 'Kobayashi Issa',
-    text: 'O snail Climb Mount Fuji, But slowly, slowly!',
-    year_of_release: '1700-01-01',
-    date_uploaded: '2017-04-21'
-};
+const haikusGetAll = [haiku1, createHaiku('haiku2')];
 
 describe('haikus', () => {
     beforeEach((done) => {
@@ -50,7 +42,7 @@ describe('haikus', () => {
             },
             function insertHaiku(cb) {
                 knex.queryBuilder()
-                    .insert([haiku1, haiku2])
+                    .insert(haikusGetAll)
                     .into('haikus')
                     .asCallback(cb);
             }
@@ -60,7 +52,6 @@ describe('haikus', () => {
         knexStub.restore();
     });
     describe('.getAll', () => {
-        const haikusGetAll = [haiku1, haiku2];
         it('gets all the haikus', (done) => {
             haikus.getAll((err, allHaikus) => {
                 assert.ifError(err);
@@ -72,6 +63,8 @@ describe('haikus', () => {
 
     describe('.save', () => {
         it('saves a haiku to the database', (done) => {
+            const haiku3 = createHaiku('haiku3');
+
             async.series([
                 function saveHaiku(cb) {
                     haikus.save(haiku3, cb);
