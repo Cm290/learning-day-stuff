@@ -1,2 +1,4 @@
 *.pyc
 *.f90
+*node_modules/*
+*postgres/
