@@ -1,4 +1,6 @@
 'use strict';
+
+const async = require('async');
 const knex = require('../lib/knex');
 
 const releaseDateFormat = "to_char(year_of_release, 'YYYY-MM-DD') as year_of_release";
@@ -13,6 +15,28 @@ const dateFormat = datesToFormat.join(', ');
 //         res.send(rows);
 //     });
 
+function deleteHaiku(id, cb) {
+    knex.queryBuilder()
+        .del()
+        .from('haikus')
+        .where({
+            id
+        })
+        .asCallback((err, results) => {
+            if (err) return cb(err);
+
+            const created = results ? false : true;
+            cb(null, created);
+        });
+};
+
+function saveHaiku(haikuSave, cb) {
+    knex.queryBuilder()
+        .insert(haikuSave)
+        .into('haikus')
+        .asCallback(cb);
+};
+
 module.exports.getAll = (cb) => {
 
     knex.queryBuilder()
@@ -26,8 +50,20 @@ module.exports.getAll = (cb) => {
 };
 
 module.exports.save = (haikuSave, cb) => {
-    knex.queryBuilder()
-        .insert(haikuSave)
-        .into('haikus')
-        .asCallback(cb);
+    const haikuId = haikuSave.id;
+
+    async.series({
+        deleteHaiku: async.apply(deleteHaiku, haikuId),
+        saveHaiku: async.apply(saveHaiku, haikuSave)
+    }, (err, results) => {
+        if (err) return cb(err);
+
+        const created = results.deleteHaiku;
+        cb(null, created);
+    });
+};
+
+module.exports.delete = (haikuDelete, cb) => {
+    const haikuId = haikuDelete.id;
+    deleteHaiku(haikuId, cb);
 };
