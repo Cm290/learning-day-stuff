@@ -5,6 +5,7 @@ const app = express();
 const index = require('./routes/index');
 const path = require('path');
 const getHaikus = require('./routes/getHaikus');
+const getHaiku = require('./routes/getHaiku');
 const putHaikus = require('./routes/putHaikus');
 const bodyParser = require('body-parser');
 
@@ -28,6 +29,7 @@ function errorHandler(err, req, res, next) {
 app.use(bodyParser.json());
 app.use('/', index);
 app.use('/haikus', getHaikus);
+app.use('/haikus/:haikusId', getHaiku);
 app.use('/haikus/:haikusId', putHaikus);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandler);

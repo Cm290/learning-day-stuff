@@ -16,7 +16,7 @@ const haikusTestData = {
     date_uploaded: '2017-04-21'
 };
 
-describe('PUT /haikus/haiku3', () => {
+describe('PUT /haikus/:haikuId', () => {
     beforeEach(() => {
         sandbox.stub(haikus, 'save').yields(null, true);
     });

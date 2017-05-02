@@ -78,3 +78,7 @@ module.exports.delete = (haikuDelete, cb) => {
     const haikuId = haikuDelete.id;
     deleteHaiku(haikuId, cb);
 };
+
+module.exports.get = (cb) => {
+    cb();
+};
