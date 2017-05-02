@@ -79,6 +79,17 @@ module.exports.delete = (haikuDelete, cb) => {
     deleteHaiku(haikuId, cb);
 };
 
-module.exports.get = (cb) => {
-    cb();
+module.exports.get = (haikuId, cb) => {
+    knex.queryBuilder()
+        .select('*')
+        .from('haikus')
+        .where({
+            id: haikuId
+        })
+        .column(knex.raw(dateFormat))
+        .asCallback((err, haiku) => {
+            if (err) return cb(err);
+
+            cb(null, haiku);
+        });
 };

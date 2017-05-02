@@ -56,9 +56,3 @@ describe('GET /haikus', () => {
             .expect(500, done);
     });
 });
-
-describe('PUT /haikus', () => {
-    beforeEach(() => {
-        sandbox.stub(haikus).yeilds();
-    })
-});

@@ -41,4 +41,11 @@ describe('GET haikus/:haikuId', () => {
                 done();
             })
     });
+
+    it('returns a 500 when retrieving the haiku returns an error', (done) => {
+        haikus.get.yields(new Error('bananas'));
+        request(server)
+            .get('/haikus/:haikuId')
+            .expect(500, done);
+    });
 });

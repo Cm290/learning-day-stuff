@@ -1,6 +1,5 @@
 'use strict';
 
-const express = require('express');
 const router = require('express').Router();
 const haikus = require('../models/haikus');
 

@@ -54,6 +54,26 @@ describe('haikus', () => {
         knexStub.restore();
         sandbox.restore();
     });
+
+    describe('.get', () => {
+        it('gets a haiku', (done) => {
+            haikus.get('haiku1', (err, haiku) => {
+                assert.ifError(err);
+                assert.deepEqual(haiku, [haiku1]);
+                done();
+            })
+        });
+
+        it('returns an error if the database returns an error', (done) => {
+            knexStub.stub(new Error('Liftum and Shiftum'));
+
+            haikus.get('haiku1', (err) => {
+                assert.ok(err);
+                assert.equal(err.message, 'Liftum and Shiftum');
+                done();
+            });
+        });
+    });
     describe('.getAll', () => {
         it('gets all the haikus', (done) => {
             haikus.getAll((err, allHaikus) => {
