@@ -17,7 +17,7 @@ const haikuTestData = {
     date_uploaded: '2017-04-21'
 };
 
-describe('GET haikus/:haikuId', () => {
+describe('GET haikus/id/:haikuId', () => {
     beforeEach(() => {
         sandbox.stub(haikus, 'get').yields(null, haikuTestData);
     });
@@ -27,13 +27,13 @@ describe('GET haikus/:haikuId', () => {
     });
     it('returns a 200 response', (done) => {
         request(server)
-            .get('/haikus/:haikuId')
+            .get('/haikus/id/:haikuId')
             .expect(200, done);
     });
 
     it('returns a haiku', (done) => {
         request(server)
-            .get('/haikus/:haikuId')
+            .get('/haikus/id/:haikuId')
             .expect(200)
             .end((err, res) => {
                 assert.ifError(err);
@@ -45,7 +45,7 @@ describe('GET haikus/:haikuId', () => {
     it('returns a 500 when retrieving the haiku returns an error', (done) => {
         haikus.get.yields(new Error('bananas'));
         request(server)
-            .get('/haikus/:haikuId')
+            .get('/haikus/id/:haikuId')
             .expect(500, done);
     });
 });

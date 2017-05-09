@@ -61,7 +61,7 @@ describe('haikus', () => {
                 assert.ifError(err);
                 assert.deepEqual(haiku, [haiku1]);
                 done();
-            })
+            });
         });
 
         it('returns an error if the database returns an error', (done) => {
@@ -90,6 +90,39 @@ describe('haikus', () => {
                 assert.ok(err);
                 assert.equal(err.message, 'Liftum and Shiftum');
                 done();
+            });
+        });
+
+        describe('pagination', () => {
+            it('it supports a perPage parameter', (done) => {
+                haikus.getAll({
+                    perPage: 1
+                }, (err, allHaikus) => {
+                    assert.ifError(err);
+                    assert.deepEqual(allHaikus, [haiku1]);
+                    done();
+                });
+            });
+
+            it('it supports a page parameter', (done) => {
+                haikus.getAll({
+                    page: 1
+                }, (err, allHaikus) => {
+                    assert.ifError(err);
+                    assert.deepEqual(allHaikus, [haiku1, haiku2]);
+                    done();
+                });
+            });
+
+            it('it supports both a perPage and a page parameter', (done) => {
+                haikus.getAll({
+                    page: 2,
+                    perPage: 1
+                }, (err, allHaikus) => {
+                    assert.ifError(err);
+                    assert.deepEqual(allHaikus, [haiku2]);
+                    done();
+                });
             });
         });
     });

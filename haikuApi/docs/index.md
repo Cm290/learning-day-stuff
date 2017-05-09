@@ -40,8 +40,6 @@ Content-Type: application/json
 
 ## TO DO
 
-* set up a database in postgres or redis 'pg_ctl -D /Users/morric67/Documents/learning-day-stuff/postgres -l logfile start'
-* allow pagination
 * allow for user set tags "tags": ["funny", "bears", "Klaus"],
 * allow for series "series": "part of some series?"
 * allow for stats "stats": {
@@ -49,11 +47,3 @@ Content-Type: application/json
                               "comments": 3,
                               "likes": 6   
                            }
-
-CREATE TABLE haikus (
-    id            varchar(80),
-    title         varchar(80),
-    author        varchar(80),
-    genre         varchar(80),
-    text          varchar(120)
-);

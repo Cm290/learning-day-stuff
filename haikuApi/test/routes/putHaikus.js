@@ -16,7 +16,7 @@ const haikusTestData = {
     date_uploaded: '2017-04-21'
 };
 
-describe('PUT /haikus/:haikuId', () => {
+describe('PUT /haikus/id/:haikuId', () => {
     beforeEach(() => {
         sandbox.stub(haikus, 'save').yields(null, true);
     });
@@ -26,7 +26,7 @@ describe('PUT /haikus/:haikuId', () => {
 
     it('returns a 201 when a new haiku is created', (done) => {
         request(server)
-            .put('/haikus/:haikuId')
+            .put('/haikus/id/:haikuId')
             .send(haikusTestData)
             .expect(201)
             .end((err, res) => {
@@ -41,7 +41,7 @@ describe('PUT /haikus/:haikuId', () => {
         haikus.save.yields(null, false);
 
         request(server)
-            .put('/haikus/:haikuId')
+            .put('/haikus/id/:haikuId')
             .send(haikusTestData)
             .expect(200, done);
     });
@@ -50,7 +50,7 @@ describe('PUT /haikus/:haikuId', () => {
         haikus.save.yields(new Error('pears'));
 
         request(server)
-            .put('/haikus/:haikuId')
+            .put('/haikus/id/:haikuId')
             .send(haikusTestData)
             .expect(500, done);
     });
@@ -58,7 +58,7 @@ describe('PUT /haikus/:haikuId', () => {
     it('returns a 400 when the body is invalid', (done) => {
 
         request(server)
-            .put('/haikus/:haikuId')
+            .put('/haikus/id/:haikuId')
             .send({
                 invalid: 'body'
             })

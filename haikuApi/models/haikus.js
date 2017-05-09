@@ -7,13 +7,6 @@ const releaseDateFormat = "to_char(year_of_release, 'YYYY-MM-DD') as year_of_rel
 const uploadDateFormat = "to_char(date_uploaded, 'YYYY-MM-DD') as date_uploaded";
 const datesToFormat = [releaseDateFormat, uploadDateFormat];
 const dateFormat = datesToFormat.join(', ');
-// knex.queryBuilder()
-//     .select('*')
-//     .from('haikus')
-//     .asCallback((err, rows) => {
-//         if (err) return next(err);
-//         res.send(rows);
-//     });
 
 function deleteHaiku(id, trx, cb) {
     if (!cb) {
@@ -46,12 +39,23 @@ function saveHaiku(haikuSave, trx, cb) {
         .asCallback(cb);
 };
 
-module.exports.getAll = (cb) => {
+module.exports.getAll = (opts, cb) => {
+    let limit;
+    let offset;
+
+    if (!cb) {
+        cb = opts;
+    }
+
+    limit = opts.perPage || 10;
+    offset = (opts.page - 1) * limit || 0;
 
     knex.queryBuilder()
         .select('*')
         .from('haikus')
         .column(knex.raw(dateFormat))
+        .limit(limit)
+        .offset(offset)
         .asCallback((err, allHaikus) => {
             if (err) return cb(err);
             cb(null, allHaikus);
@@ -92,4 +96,8 @@ module.exports.get = (haikuId, cb) => {
 
             cb(null, haiku);
         });
+};
+
+module.exports.getAllAuthors = (haikuId, cb) => {
+    cb();
 };
