@@ -1,6 +1,7 @@
 'use strict';
 
 const async = require('async');
+const moment = require('moment');
 const knex = require('../lib/knex');
 
 const releaseDateFormat = "to_char(year_of_release, 'YYYY-MM-DD') as year_of_release";
@@ -39,29 +40,6 @@ function saveHaiku(haikuSave, trx, cb) {
         .asCallback(cb);
 };
 
-module.exports.getAll = (opts, cb) => {
-    let limit;
-    let offset;
-
-    if (!cb) {
-        cb = opts;
-    }
-
-    limit = opts.perPage || 10;
-    offset = (opts.page - 1) * limit || 0;
-
-    knex.queryBuilder()
-        .select('*')
-        .from('haikus')
-        .column(knex.raw(dateFormat))
-        .limit(limit)
-        .offset(offset)
-        .asCallback((err, allHaikus) => {
-            if (err) return cb(err);
-            cb(null, allHaikus);
-        });
-
-};
 
 module.exports.save = (haikuSave, cb) => {
     const haikuId = haikuSave.id;
@@ -83,6 +61,30 @@ module.exports.delete = (haikuDelete, cb) => {
     deleteHaiku(haikuId, cb);
 };
 
+module.exports.getAll = (opts, cb) => {
+    let limit;
+    let offset;
+
+    if (!cb) {
+        cb = opts;
+    }
+
+    limit = opts.perPage || 10;
+    offset = (opts.page - 1) * limit || 0;
+
+    knex.queryBuilder()
+        .select('*')
+        .from('haikus')
+        .column(toChar('date_uploaded'), toChar('year_of_release'))
+        .limit(limit)
+        .offset(offset)
+        .asCallback((err, allHaikus) => {
+            if (err) return cb(err);
+            cb(null, allHaikus);
+        });
+
+};
+
 module.exports.get = (haikuId, cb) => {
     knex.queryBuilder()
         .select('*')
@@ -98,6 +100,34 @@ module.exports.get = (haikuId, cb) => {
         });
 };
 
-module.exports.getAllAuthors = (haikuId, cb) => {
-    cb();
+module.exports.getAllAuthors = (cb) => {
+    const lastActive = toChar('max(date_uploaded)', 'last_active');
+
+    knex.queryBuilder()
+        .select('author', lastActive)
+        .count('author as haikus')
+        .from('haikus')
+        .groupBy('author')
+        .asCallback((err, allAuthors) => {
+            if (err) return cb(err);
+
+            async.map(allAuthors, lastActiveFormat, (err, results) => {
+                if (err) return cb(err);
+                cb(null, results);
+            });
+        });
 };
+
+function lastActiveFormat(eachAuthor, cb) {
+    cb(null, Object.assign({}, eachAuthor, {
+        last_active: moment(eachAuthor.last_active).fromNow()
+    }));
+};
+
+function toChar(valueToChar, nameOfChar) {
+    if (!nameOfChar) {
+        nameOfChar = valueToChar;
+    }
+
+    return knex.raw(`to_char(${valueToChar}, 'YYYY-MM-DD') as ${nameOfChar}`)
+}

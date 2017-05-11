@@ -8,14 +8,14 @@ const sandbox = sinon.sandbox.create();
 const haikus = require('../../models/haikus');
 
 const authorsTestData = [{
-        author: 'Basho Matsuo',
-        haikus: '2',
-        last_active: '3 days ago'
-    },
-    {
         author: 'Yosa Buson',
         haikus: '1',
         last_active: '2 months ago'
+    },
+    {
+        author: 'Basho Matsuo',
+        haikus: '2',
+        last_active: '3 days ago'
     }
 ]
 

@@ -40,6 +40,7 @@ Content-Type: application/json
 
 ## TO DO
 
+* add getAllAuthors in model
 * allow for user set tags "tags": ["funny", "bears", "Klaus"],
 * allow for series "series": "part of some series?"
 * allow for stats "stats": {
