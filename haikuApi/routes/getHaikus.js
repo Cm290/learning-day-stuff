@@ -15,9 +15,11 @@ router.get('/haikus', (req, res, next) => {
         if (err) {
             return next(err)
         };
+        const total = allHaikus.length;
         res.json({
             page,
             perPage,
+            total,
             results: allHaikus
         });
     });

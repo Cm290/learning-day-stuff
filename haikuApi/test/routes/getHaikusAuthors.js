@@ -38,6 +38,17 @@ describe('GET /haikus/authors', () => {
             });
     });
 
+    it('returns the total number of haiku authors', (done) => {
+        request(server)
+            .get('/haikus/authors')
+            .expect(200)
+            .end((err, res) => {
+                assert.ifError(err);
+                assert.equal(res.body.total, "2");
+                done();
+            });
+    });
+
     it('returns a 500 when retiving the haiku authors fails', (done) => {
         haikus.getAllAuthors.yields(new Error('snow crash'));
         request(server)

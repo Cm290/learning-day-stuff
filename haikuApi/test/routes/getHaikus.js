@@ -54,6 +54,17 @@ describe('GET /haikus', () => {
             });
     });
 
+    it('returns a list of haikus', (done) => {
+        request(server)
+            .get('/haikus')
+            .expect(200)
+            .end((err, res) => {
+                assert.ifError(err);
+                assert.equal(res.body.total, "2");
+                done();
+            });
+    });
+
     it('returns a 500 when retrieving the haikus returns an error', (done) => {
         haikus.getAll.yields(new Error('bananas'));
         request(server)

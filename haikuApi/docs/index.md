@@ -5,6 +5,7 @@
 * [`GET /haikus`](#-get-haikus-) - returns a paginated list of all haikus
 * [`GET /haikus/id/:haikuId`](#-get-haikus-id-haikuId) - returns the haiku of the id given
 * [`GET /haikus/authors`](#-get-authors) - returns a paginated list of all haikus authors
+* [`PUT /haikus/id/:haikuId`](#-get-haikus-id-haikuId) - saves and updates a haiku in the database
 
 #### `GET /haikus`
 Returns a paginated list of all haikus
@@ -22,6 +23,7 @@ Content-Type: application/json
 {
   "page": "1",
   "perPage": "10",
+  "total": "2",
   "results": [
     {
       "id": "haiku1",
@@ -86,6 +88,7 @@ Content-Type: application/json
 {
   "page": "1",
   "perPage": "10",
+  "total": 1,
   "results": [
     {
       "author": "Basho Matsuo",
@@ -137,12 +140,8 @@ Content-Type: application/json
 
 ## TO DO
 
-* cache-control headers
-* mutiple clusters
-* total
 * validate query strings
 * change the default haikus
-* add getAllAuthors in model
 * allow for user set tags "tags": ["funny", "bears", "Klaus"],
 * allow for series "series": "part of some series?"
 * allow for stats "stats": {
