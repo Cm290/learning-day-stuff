@@ -64,7 +64,7 @@ describe('.getAll', () => {
     it('returns an error if the database returns an error', (done) => {
         knexStub.stub(new Error('Liftum and Shiftum'));
 
-        haikus.getAll((err, created) => {
+        haikus.getAll((err, allHaikus) => {
             assert.ok(err);
             assert.equal(err.message, 'Liftum and Shiftum');
             done();
@@ -84,10 +84,10 @@ describe('.getAll', () => {
 
         it('it supports a page parameter', (done) => {
             haikus.getAll({
-                page: 1
+                page: 2
             }, (err, allHaikus) => {
                 assert.ifError(err);
-                assert.deepEqual(allHaikus, [haiku1, haiku2]);
+                assert.deepEqual(allHaikus, []);
                 done();
             });
         });

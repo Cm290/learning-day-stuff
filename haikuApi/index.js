@@ -10,7 +10,7 @@ const getHaiku = require('./routes/getHaiku');
 const putHaikus = require('./routes/putHaikus');
 const getHaikusAuthors = require('./routes/getHaikusAuthors');
 
-const routes = [getHaikus, getHaiku, putHaikus, getHaikusAuthors]
+const routes = [index, getHaikus, getHaiku, putHaikus, getHaikusAuthors]
 
 function errorHandler(err, req, res, next) {
     if (err.isBoom) {
@@ -30,7 +30,6 @@ function errorHandler(err, req, res, next) {
 };
 
 app.use(bodyParser.json());
-app.use('/', index);
 app.use('/', routes);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandler);

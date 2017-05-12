@@ -137,11 +137,11 @@ Content-Type: application/json
 
 ## TO DO
 
-* pagination for authors
 * cache-control headers
 * mutiple clusters
 * failing test
 * total
+* validate query strings
 * change the default haikus
 * add getAllAuthors in model
 * allow for user set tags "tags": ["funny", "bears", "Klaus"],

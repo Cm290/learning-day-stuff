@@ -48,6 +48,12 @@ const authorsTestData = [{
     }
 ]
 
+const authorTestData = [{
+    author: 'Basho Matsuo',
+    haikus: '2',
+    last_active: '5 days ago'
+}]
+
 describe('.getAllAuthors', () => {
     beforeEach((done) => {
         async.series([
@@ -77,46 +83,27 @@ describe('.getAllAuthors', () => {
         });
     });
 
-    // it('returns an error if the database returns an error', (done) => {
-    //     knexStub.stub(new Error('Liftum and Shiftum'));
-    //
-    //     haikus.getAll((err, created) => {
-    //         assert.ok(err);
-    //         assert.equal(err.message, 'Liftum and Shiftum');
-    //         done();
-    //     });
-    // });
-    //
-    // describe('pagination', () => {
-    //     it('it supports a perPage parameter', (done) => {
-    //         haikus.getAll({
-    //             perPage: 1
-    //         }, (err, allHaikus) => {
-    //             assert.ifError(err);
-    //             assert.deepEqual(allHaikus, [haiku1]);
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('it supports a page parameter', (done) => {
-    //         haikus.getAll({
-    //             page: 1
-    //         }, (err, allHaikus) => {
-    //             assert.ifError(err);
-    //             assert.deepEqual(allHaikus, [haiku1, haiku2]);
-    //             done();
-    //         });
-    //     });
-    //
-    //     it('it supports both a perPage and a page parameter', (done) => {
-    //         haikus.getAll({
-    //             page: 2,
-    //             perPage: 1
-    //         }, (err, allHaikus) => {
-    //             assert.ifError(err);
-    //             assert.deepEqual(allHaikus, [haiku2]);
-    //             done();
-    //         });
-    //     });
-    // });
+    it('returns an error if the database returns an error', (done) => {
+        knexStub.stub(new Error('Liftum and Shiftum'));
+
+        haikus.getAllAuthors((err, allAuthors) => {
+            assert.ok(err);
+            assert.equal(err.message, 'Liftum and Shiftum');
+            done();
+        });
+    });
+
+    describe('pagination', () => {
+
+        it('it supports both a perPage and a page parameter', (done) => {
+            haikus.getAllAuthors({
+                page: 2,
+                perPage: 1
+            }, (err, allAuthors) => {
+                assert.ifError(err);
+                assert.deepEqual(allAuthors, authorTestData);
+                done();
+            });
+        });
+    });
 });

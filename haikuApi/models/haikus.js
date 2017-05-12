@@ -78,16 +78,13 @@ module.exports.delete = (haikuDelete, cb) => {
 };
 
 module.exports.getAll = (opts, cb) => {
-    let limit;
-    let offset;
-
     if (!cb) {
         cb = opts;
         opts = {};
     }
 
-    limit = opts.perPage || 10;
-    offset = (opts.page - 1) * limit || 0;
+    const limit = opts.perPage || 10;
+    const offset = (opts.page - 1) * limit || 0;
 
     knex.queryBuilder()
         .select('*')
@@ -119,16 +116,23 @@ module.exports.get = (haikuId, cb) => {
 };
 
 module.exports.getAllAuthors = (opts, cb) => {
+
     if (!cb) {
         cb = opts;
         opts = {};
     }
+
+    const limit = opts.perPage || 10;
+    const offset = (opts.page - 1) * limit || 0;
+
     const lastActive = formatDate('max(date_uploaded)', 'last_active');
 
     knex.queryBuilder()
         .select('author', lastActive)
         .count('author as haikus')
         .from('haikus')
+        .limit(limit)
+        .offset(offset)
         .groupBy('author')
         .asCallback((err, allAuthors) => {
             if (err) return cb(err);
