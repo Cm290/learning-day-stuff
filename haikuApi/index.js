@@ -5,6 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const index = require('./routes/index');
 const path = require('path');
+const cacheControl = require('./middleware/cache-control');
 const getHaikus = require('./routes/getHaikus');
 const getHaiku = require('./routes/getHaiku');
 const putHaikus = require('./routes/putHaikus');
@@ -29,6 +30,7 @@ function errorHandler(err, req, res, next) {
     };
 };
 
+app.use(cacheControl());
 app.use(bodyParser.json());
 app.use('/', routes);
 app.use(express.static(path.join(__dirname, 'public')));

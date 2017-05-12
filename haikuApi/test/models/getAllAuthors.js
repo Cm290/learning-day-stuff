@@ -3,8 +3,8 @@
 const assert = require('assert');
 const async = require('async');
 const fs = require('fs');
+const moment = require('moment');
 const sinon = require('sinon');
-const sandbox = sinon.sandbox.create();
 
 const knex = require('../../lib/knex');
 const haikus = require('../../models/haikus');
@@ -33,6 +33,7 @@ function generateHaiku(id, author, dateUploaded) {
     });
     return haiku;
 };
+
 const haiku2 = generateHaiku('haiku2', 'Yosa Buson', '2017-02-21');
 const haiku3 = generateHaiku('haiku3', 'Basho Matsuo', '2017-02-21');
 
@@ -44,14 +45,14 @@ const authorsTestData = [{
     {
         author: 'Basho Matsuo',
         haikus: '2',
-        last_active: '5 days ago'
+        last_active: '4 days ago'
     }
 ]
 
 const authorTestData = [{
     author: 'Basho Matsuo',
     haikus: '2',
-    last_active: '5 days ago'
+    last_active: '4 days ago'
 }]
 
 describe('.getAllAuthors', () => {
@@ -70,12 +71,15 @@ describe('.getAllAuthors', () => {
             }
         ], done);
     });
+
     afterEach(() => {
         knexStub.restore();
-        sandbox.restore();
+        sinon.useFakeTimers().restore();
     });
 
     it('gets all the haikus authors', (done) => {
+        sinon.useFakeTimers(new Date(2017, 4, 11).getTime(), "Date")
+
         haikus.getAllAuthors((err, allAuthors) => {
             assert.ifError(err);
             assert.deepEqual(allAuthors, authorsTestData);
@@ -96,6 +100,7 @@ describe('.getAllAuthors', () => {
     describe('pagination', () => {
 
         it('it supports both a perPage and a page parameter', (done) => {
+            sinon.useFakeTimers(new Date(2017, 4, 11).getTime(), "Date")
             haikus.getAllAuthors({
                 page: 2,
                 perPage: 1

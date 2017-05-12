@@ -139,7 +139,6 @@ Content-Type: application/json
 
 * cache-control headers
 * mutiple clusters
-* failing test
 * total
 * validate query strings
 * change the default haikus
