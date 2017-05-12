@@ -15,7 +15,7 @@ const schema = Joi.object().keys({
     date_uploaded: Joi.date().required(),
 });
 
-router.put('/', (req, res, next) => {
+router.put('/haikus/id/:haikusId', (req, res, next) => {
     const haiku = req.body;
     const valid = Joi.validate(haiku, schema);
     if (valid.error) {

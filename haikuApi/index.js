@@ -2,13 +2,15 @@
 
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 const index = require('./routes/index');
 const path = require('path');
 const getHaikus = require('./routes/getHaikus');
 const getHaiku = require('./routes/getHaiku');
 const putHaikus = require('./routes/putHaikus');
 const getHaikusAuthors = require('./routes/getHaikusAuthors');
-const bodyParser = require('body-parser');
+
+const routes = [getHaikus, getHaiku, putHaikus, getHaikusAuthors]
 
 function errorHandler(err, req, res, next) {
     if (err.isBoom) {
@@ -29,10 +31,7 @@ function errorHandler(err, req, res, next) {
 
 app.use(bodyParser.json());
 app.use('/', index);
-app.use('/haikus', getHaikus);
-app.use('/haikus/id/:haikusId', getHaiku);
-app.use('/haikus/id/:haikusId', putHaikus);
-app.use('/haikus/authors', getHaikusAuthors);
+app.use('/', routes);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandler);
 

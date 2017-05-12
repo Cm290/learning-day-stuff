@@ -3,7 +3,7 @@
 const router = require('express').Router();
 const haikus = require('../models/haikus');
 
-router.get('/', (req, res, next) => {
+router.get('/haikus', (req, res, next) => {
     const page = req.query.page || "1";
     const perPage = req.query.perPage || "10";
 

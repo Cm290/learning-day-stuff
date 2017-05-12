@@ -4,10 +4,26 @@ const async = require('async');
 const moment = require('moment');
 const knex = require('../lib/knex');
 
-const releaseDateFormat = "to_char(year_of_release, 'YYYY-MM-DD') as year_of_release";
-const uploadDateFormat = "to_char(date_uploaded, 'YYYY-MM-DD') as date_uploaded";
-const datesToFormat = [releaseDateFormat, uploadDateFormat];
-const dateFormat = datesToFormat.join(', ');
+function lastActiveFormat(eachAuthor, cb) {
+    cb(null, Object.assign({}, eachAuthor, {
+        last_active: moment(eachAuthor.last_active).fromNow()
+    }));
+};
+
+function formatDate(valueToChar, nameOfChar) {
+    if (!nameOfChar) {
+        nameOfChar = valueToChar;
+    }
+
+    return knex.raw(`to_char(${valueToChar}, 'YYYY-MM-DD') as ${nameOfChar}`)
+}
+
+function formatAllAuthors(allAuthors, cb) {
+    async.map(allAuthors, lastActiveFormat, (err, results) => {
+        if (err) return cb(err);
+        cb(null, results);
+    });
+}
 
 function deleteHaiku(id, trx, cb) {
     if (!cb) {
@@ -67,6 +83,7 @@ module.exports.getAll = (opts, cb) => {
 
     if (!cb) {
         cb = opts;
+        opts = {};
     }
 
     limit = opts.perPage || 10;
@@ -75,7 +92,7 @@ module.exports.getAll = (opts, cb) => {
     knex.queryBuilder()
         .select('*')
         .from('haikus')
-        .column(toChar('date_uploaded'), toChar('year_of_release'))
+        .column(formatDate('date_uploaded'), formatDate('year_of_release'))
         .limit(limit)
         .offset(offset)
         .asCallback((err, allHaikus) => {
@@ -86,13 +103,14 @@ module.exports.getAll = (opts, cb) => {
 };
 
 module.exports.get = (haikuId, cb) => {
+
     knex.queryBuilder()
         .select('*')
         .from('haikus')
         .where({
             id: haikuId
         })
-        .column(knex.raw(dateFormat))
+        .column(formatDate('date_uploaded'), formatDate('year_of_release'))
         .asCallback((err, haiku) => {
             if (err) return cb(err);
 
@@ -100,8 +118,12 @@ module.exports.get = (haikuId, cb) => {
         });
 };
 
-module.exports.getAllAuthors = (cb) => {
-    const lastActive = toChar('max(date_uploaded)', 'last_active');
+module.exports.getAllAuthors = (opts, cb) => {
+    if (!cb) {
+        cb = opts;
+        opts = {};
+    }
+    const lastActive = formatDate('max(date_uploaded)', 'last_active');
 
     knex.queryBuilder()
         .select('author', lastActive)
@@ -111,23 +133,6 @@ module.exports.getAllAuthors = (cb) => {
         .asCallback((err, allAuthors) => {
             if (err) return cb(err);
 
-            async.map(allAuthors, lastActiveFormat, (err, results) => {
-                if (err) return cb(err);
-                cb(null, results);
-            });
+            formatAllAuthors(allAuthors, cb)
         });
 };
-
-function lastActiveFormat(eachAuthor, cb) {
-    cb(null, Object.assign({}, eachAuthor, {
-        last_active: moment(eachAuthor.last_active).fromNow()
-    }));
-};
-
-function toChar(valueToChar, nameOfChar) {
-    if (!nameOfChar) {
-        nameOfChar = valueToChar;
-    }
-
-    return knex.raw(`to_char(${valueToChar}, 'YYYY-MM-DD') as ${nameOfChar}`)
-}
