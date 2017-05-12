@@ -27,13 +27,13 @@ describe('GET haikus/id/:haikuId', () => {
     });
     it('returns a 200 response', (done) => {
         request(server)
-            .get('/haikus/id/:haikuId')
+            .get('/haikus/id/haiku1')
             .expect(200, done);
     });
 
     it('returns a haiku', (done) => {
         request(server)
-            .get('/haikus/id/:haikuId')
+            .get('/haikus/id/haiku1')
             .expect(200)
             .end((err, res) => {
                 assert.ifError(err);
@@ -45,7 +45,7 @@ describe('GET haikus/id/:haikuId', () => {
     it('returns a 500 when retrieving the haiku returns an error', (done) => {
         haikus.get.yields(new Error('bananas'));
         request(server)
-            .get('/haikus/id/:haikuId')
+            .get('/haikus/id/haiku1')
             .expect(500, done);
     });
 });
