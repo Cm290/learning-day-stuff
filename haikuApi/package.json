@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "docs": "ibl-documentation-generator"
+    "docs": "ibl-documentation-generator",
+    "start": "PORT=7080 node server.js"
   },
   "author": "",
   "license": "ISC",

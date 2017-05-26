@@ -10,8 +10,11 @@ const getHaikus = require('./routes/getHaikus');
 const getHaiku = require('./routes/getHaiku');
 const putHaikus = require('./routes/putHaikus');
 const getHaikusAuthors = require('./routes/getHaikusAuthors');
+const getStatus = require('./routes/getStatus');
 
-const routes = [index, getHaikus, getHaiku, putHaikus, getHaikusAuthors]
+const routes = [index, getHaikus, getHaiku, putHaikus, getHaikusAuthors, getStatus];
+
+const PORT = process.env.PORT || 7080;
 
 function errorHandler(err, req, res, next) {
     if (err.isBoom) {
@@ -36,8 +39,8 @@ app.use('/', routes);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandler);
 
-const server = app.listen(3000, function() {
-    console.log('Example app listening on port 3000!')
+const server = app.listen(PORT, function() {
+    console.log(`Example app listening on port ${PORT}!`)
 });
 
 module.exports = server;
