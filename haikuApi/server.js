@@ -3,7 +3,9 @@
 const cluster = require('cluster');
 
 if (cluster.isMaster) {
-    cluster.fork();
+    for (let i = 0; i < 7; i++) {
+        cluster.fork();
+    }
 
     cluster.on('exit', (worker) => {
         console.log(`Worker ${worker.process.pid} died`);
